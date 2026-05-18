@@ -12,6 +12,7 @@ OW_PACKAGE="${OW_PACKAGE:-ow-agent-orchestration}"
 OW_OPENCODE_BASE_URL="${OW_OPENCODE_BASE_URL:-https://github.com/anomalyco/opencode/releases/latest/download}"
 INSTALL_BIN="${HOME}/.local/bin"
 OPENCODE_DIR="${HOME}/.local/share/ow"
+OPENCODE_BIN_DIR="${OPENCODE_DIR}/bin"
 
 # ── Detect architecture ──────────────────────────────────────────────────────
 ARCH=$(uname -m)
@@ -38,7 +39,7 @@ echo "Installing ow..."
 uv tool install "${OW_PACKAGE}"
 
 # ── 3. Download and unpack the bundled opencode binary ───────────────────────
-mkdir -p "${OPENCODE_DIR}"
+mkdir -p "${OPENCODE_BIN_DIR}"
 
 TEMP_TAR=$(mktemp -t opencode-XXXXXX.tar.gz)
 TEMP_DIR=$(mktemp -d)
@@ -55,13 +56,13 @@ if [ -z "${OC_BIN}" ]; then
     exit 1
 fi
 
-cp "${OC_BIN}" "${OPENCODE_DIR}/opencode"
-chmod +x "${OPENCODE_DIR}/opencode"
+cp "${OC_BIN}" "${OPENCODE_BIN_DIR}/opencode"
+chmod +x "${OPENCODE_BIN_DIR}/opencode"
 
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
 echo "ow installed to ${INSTALL_BIN}/ow"
-echo "opencode bundled at ${OPENCODE_DIR}/opencode"
+echo "opencode bundled at ${OPENCODE_BIN_DIR}/opencode"
 
 if [[ ":${PATH}:" != *":${INSTALL_BIN}:"* ]]; then
     echo ""

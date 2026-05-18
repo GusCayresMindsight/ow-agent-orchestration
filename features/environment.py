@@ -16,6 +16,12 @@ echo "$*" > "${WORK_DIR}/argv.txt"
 # Record which instance was invoked
 echo "${FAKE_OPENCODE_IDENTITY:-bundled}" > "${WORK_DIR}/invoked_by.txt"
 
+# Record XDG base directory overrides (for storage isolation tests)
+echo "${XDG_DATA_HOME:-}" > "${WORK_DIR}/xdg_data_home.txt"
+echo "${XDG_CONFIG_HOME:-}" > "${WORK_DIR}/xdg_config_home.txt"
+echo "${XDG_CACHE_HOME:-}" > "${WORK_DIR}/xdg_cache_home.txt"
+echo "${XDG_STATE_HOME:-}" > "${WORK_DIR}/xdg_state_home.txt"
+
 # Handle --version
 if [ "${1:-}" = "--version" ]; then
     echo "${FAKE_OPENCODE_VERSION:-0.0.0-fake}"
