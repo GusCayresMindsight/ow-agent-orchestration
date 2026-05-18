@@ -31,7 +31,26 @@ def _find_bundled_opencode() -> str:
     if env_path:
         return env_path
 
-    return str(Path.home() / ".local" / "share" / "ow" / "opencode")
+    return str(Path.home() / ".local" / "share" / "ow" / "bin" / "opencode")
+
+
+def _ow_xdg_env() -> dict[str, str]:
+    """Return XDG base-dir overrides that scope opencode's storage under ow's
+    own namespace, keeping it separate from the user's stock opencode install.
+
+    With these set, opencode writes to:
+      ~/.local/share/ow/opencode/   (data — sessions, SQLite DB)
+      ~/.config/ow/opencode/        (config)
+      ~/.cache/ow/opencode/         (cache / binary downloads)
+      ~/.local/state/ow/opencode/   (state)
+    """
+    home = Path.home()
+    return {
+        "XDG_DATA_HOME":  str(home / ".local" / "share" / "ow"),
+        "XDG_CONFIG_HOME": str(home / ".config" / "ow"),
+        "XDG_CACHE_HOME":  str(home / ".cache" / "ow"),
+        "XDG_STATE_HOME":  str(home / ".local" / "state" / "ow"),
+    }
 
 
 def _ow_version() -> str:
@@ -64,12 +83,15 @@ def main() -> None:  # pragma: no cover entry point
         print(f"opencode {_opencode_version(opencode)}")
         sys.exit(0)
 
-    # Start opencode as a child process, inheriting stdin/stdout/stderr
+    # Start opencode as a child process, inheriting stdin/stdout/stderr.
+    # XDG overrides ensure opencode's storage is scoped to ow's own namespace
+    # and does not collide with the user's stock opencode installation.
     proc = subprocess.Popen(
         [opencode] + args,
         stdin=sys.stdin,
         stdout=sys.stdout,
         stderr=sys.stderr,
+        env={**os.environ, **_ow_xdg_env()},
     )
 
     # Forward signals from ow to the opencode child
