@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: Publish and release
+    runs-on: ubuntu-latest
+    environment: release
+
+    permissions:
+      contents: write   # create GitHub Release and upload assets
+      id-token: write   # PyPI trusted publishing (OIDC)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build package
+        run: uv build
+
+      - name: Run tests
+        run: |
+          uv run --with behave behave
+
+      - name: Publish to PyPI
+        run: uv publish
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Create GitHub Release and upload install script
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "${{ github.ref_name }}" \
+            --notes "$(cat <<'EOF'
+          ## Install
+
+          ```bash
+          curl -fsSL https://github.com/${{ github.repository }}/releases/latest/download/install | bash
+          ```
+
+          This installs:
+          - `ow` to `~/.local/bin/ow` (via uv)
+          - the bundled opencode to `~/.local/share/ow/opencode`
+          EOF
+          )" \
+            "scripts/install.sh#install"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

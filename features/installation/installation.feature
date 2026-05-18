@@ -3,8 +3,8 @@ Feature: Installation via curl
   I want to install ow-agent-orchestration with a single command
   So that I can use it without interfering with any existing opencode installation
 
-  The install script is served from GitHub Pages:
-  https://guscayresmindsight.github.io/ow-agent-orchestration/install
+  The install script is distributed via GitHub Releases:
+  https://github.com/GusCayresMindsight/ow-agent-orchestration/releases/latest/download/install
 
   Background:
     Given curl and bash are available on the system
