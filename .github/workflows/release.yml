@@ -9,6 +9,7 @@ jobs:
   release:
     name: Publish and release
     runs-on: ubuntu-latest
+    environment: stable
 
     permissions:
       contents: write   # create GitHub Release and upload assets
