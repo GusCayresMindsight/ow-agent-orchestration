@@ -1,16 +1,19 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "ow-agent-orchestration"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A BDD-focused fork of opencode"
 license = { text = "MIT" }
 requires-python = ">=3.12"
 
 [project.scripts]
 ow = "ow_agent_orchestration.entrypoint:main"
+
+[tool.hatch.version]
+source = "vcs"
 
 [tool.hatch.envs.default]
 dependencies = [
