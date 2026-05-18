@@ -9,7 +9,7 @@
 set -euo pipefail
 
 OW_PACKAGE="${OW_PACKAGE:-ow-agent-orchestration}"
-OW_OPENCODE_BASE_URL="${OW_OPENCODE_BASE_URL:-https://github.com/anomalyco/opencode/releases/latest/download}"
+OW_OPENCODE_BASE_URL="${OW_OPENCODE_BASE_URL:-https://github.com/anomalyco/ow-agent-orchestration/releases/latest/download}"
 INSTALL_BIN="${HOME}/.local/bin"
 OPENCODE_DIR="${HOME}/.local/share/ow"
 OPENCODE_BIN_DIR="${OPENCODE_DIR}/bin"
