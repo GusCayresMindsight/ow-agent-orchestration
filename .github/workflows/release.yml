@@ -35,6 +35,7 @@ jobs:
 
       - name: Create GitHub Release and upload install script
         run: |
+          cp scripts/install.sh install
           gh release create "${{ github.ref_name }}" \
             --title "${{ github.ref_name }}" \
             --notes "$(cat <<'EOF'
@@ -49,6 +50,6 @@ jobs:
           - the bundled opencode to `~/.local/share/ow/opencode`
           EOF
           )" \
-            "scripts/install.sh#install"
+            install
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
