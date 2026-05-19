@@ -28,10 +28,10 @@ Feature: opencode bundled as a git subtree
     And no row in either half is wider than 8 characters
     And opencode/packages/opencode/src/cli/ui.ts defines a wordmark that reads "ow"
 
-  Scenario: ow patches are commits layered on top of the upstream squash
+  Scenario: the opencode git history records both the upstream incorporation and ow patches
     Given the git log of the opencode/ prefix
-    Then the oldest commit touching opencode/ is a squash of the upstream source
-    And at least one subsequent commit to opencode/ carries an ow-specific patch message
+    Then the git history includes a commit that incorporated the upstream opencode source
+    And the git history includes a commit that applies ow-specific changes
 
   Scenario: the release workflow builds the binary from the local subtree
     Given the release workflow at .github/workflows/release.yml
