@@ -1,0 +1,7 @@
+{
+  "name": "@ow/typescript-bdd-tests",
+  "private": true,
+  "devDependencies": {
+    "@cucumber/cucumber": "^11"
+  }
+}

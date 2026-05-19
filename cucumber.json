@@ -1,0 +1,10 @@
+{
+  "default": {
+    "paths": ["features/**/*.feature"],
+    "tags": "@cucumber",
+    "import": [
+      "features/cucumber-tests/support/hooks.ts",
+      "features/cucumber-tests/steps/*.ts"
+    ]
+  }
+}

@@ -1,3 +1,4 @@
+@behave
 Feature: Installation via curl
   As a developer on Linux
   I want to install ow-agent-orchestration with a single command
