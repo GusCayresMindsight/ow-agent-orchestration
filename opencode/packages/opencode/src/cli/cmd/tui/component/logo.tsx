@@ -53,8 +53,8 @@ const shimmerConfig: ShimmerConfig = {
   ambientWidth: 0.34,
   shadowMix: 0.1,
   primaryMix: 0.3,
-  originX: 4.5,
-  originY: 13.5,
+  originX: 6.5,
+  originY: 7.0,
 }
 
 // Shadow markers (rendered chars in parens):
