@@ -1,7 +1,7 @@
 import { When, Then, Given } from "@cucumber/cucumber"
 import { Effect } from "effect"
-import { Permission } from "../../opencode/packages/opencode/src/permission"
-import { Agent } from "../../opencode/packages/opencode/src/agent/agent"
+import { Permission } from "../../../opencode/packages/opencode/src/permission"
+import { Agent } from "../../../opencode/packages/opencode/src/agent/agent"
 import { AgentWorld } from "../support/hooks"
 import assert from "node:assert/strict"
 

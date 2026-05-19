@@ -2,8 +2,8 @@
   "default": {
     "paths": ["features/**/*.feature"],
     "import": [
-      "cucumber-tests/support/hooks.ts",
-      "cucumber-tests/steps/*.ts"
+      "features/cucumber-tests/support/hooks.ts",
+      "features/cucumber-tests/steps/*.ts"
     ]
   }
 }
