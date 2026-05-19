@@ -11,6 +11,7 @@ import PROMPT_COMPACTION from "./prompt/compaction.txt"
 import PROMPT_EXPLORE from "./prompt/explore.txt"
 import PROMPT_SCOUT from "./prompt/scout.txt"
 import PROMPT_SUMMARY from "./prompt/summary.txt"
+import PROMPT_TEST from "./prompt/test.txt"
 import PROMPT_TITLE from "./prompt/title.txt"
 import { Permission } from "@/permission"
 import { mergeDeep, pipe, sortBy, values } from "remeda"
@@ -156,6 +157,25 @@ export const layer = Layer.effect(
                   [path.join(".opencode", "plans", "*.md")]: "allow",
                   [path.relative(ctx.worktree, path.join(Global.Path.data, path.join("plans", "*.md")))]: "allow",
                 },
+              }),
+              user,
+            ),
+            mode: "primary",
+            native: true,
+          },
+          test: {
+            name: "test",
+            description:
+              "Test mode. Write and debug feature files, step definitions, and tests. Requires confirmation before any file edit or shell command.",
+            options: {},
+            prompt: PROMPT_TEST,
+            color: "#22c55e",
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                question: "allow",
+                edit: { "*": "ask" },
+                bash: { "*": "ask" },
               }),
               user,
             ),

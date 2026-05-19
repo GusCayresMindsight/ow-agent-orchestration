@@ -8,10 +8,15 @@ It extends opencode with new behaviors. Existing opencode behaviors are
 
 ## Architecture hierarchy (strictly enforced)
 
+Two parallel BDD test roots exist — one Python, one TypeScript:
+
 ```
-1st class — features/*.feature        ← the spec; start here always
-2nd class — features/steps/*_steps.py ← wiring; exists to serve features
-3rd class — src/ow_agent_orchestration/ ← implementation; exists to serve steps
+1st class — behave-tests/**/*.feature          ← Python BDD spec; start here for Python domains
+            typescript-bdd-tests/**/*.feature  ← TypeScript BDD spec; start here for TS domains
+2nd class — behave-tests/steps/*_steps.py      ← Python wiring; exists to serve Python features
+            typescript-bdd-tests/steps/*.ts    ← TypeScript wiring; exists to serve TS features
+3rd class — src/ow_agent_orchestration/        ← Python implementation; exists to serve Python steps
+            opencode/packages/opencode/src/    ← TypeScript implementation; exists to serve TS steps
 ```
 
 **The golden rule:** no step definition may exist without a feature that
@@ -21,42 +26,61 @@ Work always flows top-down: feature → step → implementation.
 ## Directory layout
 
 ```
-features/
-  environment.py          # behave hooks and shared context
-  <domain>/
-    <behavior>.feature    # one file per distinct behavior
-  steps/
-    <domain>_steps.py     # step defs grouped by domain, not by class/module
-
-src/
-  ow_agent_orchestration/
-    __init__.py
-    <domain>/             # mirrors features/<domain>/ structure
+ow-agent-orchestration/
+├── package.json              ← bun workspace root (covers opencode/* + typescript-bdd-tests)
+├── cucumber.json             ← cucumber-js config (run from repo root with: bun x cucumber-js)
+├── behave-tests/             ← Python BDD suite
+│   ├── environment.py        # behave hooks and shared context
+│   ├── <domain>/
+│   │   └── <behavior>.feature  # one file per distinct behavior
+│   └── steps/
+│       └── <domain>_steps.py   # step defs grouped by domain, not by class/module
+├── typescript-bdd-tests/     ← TypeScript BDD suite
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── <domain>/
+│   │   └── <behavior>.feature
+│   ├── support/
+│   │   └── hooks.ts          # Effect runtime lifecycle (BeforeAll / AfterAll / Before)
+│   └── steps/
+│       └── <domain>_steps.ts
+├── opencode/                 ← upstream subtree (unchanged except agent additions)
+├── src/
+│   └── ow_agent_orchestration/
+│       └── <domain>/         # mirrors behave-tests/<domain>/ structure
+└── pyproject.toml
 ```
 
 ## Stack
 
-| Layer       | Tool                      |
-|-------------|---------------------------|
-| BDD runner  | behave                    |
-| Language    | Python 3.12+              |
-| Package/env | hatch                     |
-| License     | MIT (copyright "opencode")|
+| Layer              | Tool                      |
+|--------------------|---------------------------|
+| Python BDD runner  | behave                    |
+| TypeScript BDD runner | @cucumber/cucumber (bun) |
+| Language (Python)  | Python 3.12+              |
+| Language (TS)      | TypeScript / Bun          |
+| Package/env        | hatch (Python), bun (TS)  |
+| License            | MIT (copyright "opencode")|
 
 ## Conventions
 
 - Feature files use plain Gherkin. Avoid custom DSL in steps — steps should
   read like English.
-- One `<domain>_steps.py` per domain. Never one step file per feature file.
-- `environment.py` owns fixture setup/teardown (`before_scenario`,
+- One `<domain>_steps.py` (Python) or `<domain>_steps.ts` (TypeScript) per domain.
+  Never one step file per feature file.
+- `behave-tests/environment.py` owns Python fixture setup/teardown (`before_scenario`,
   `after_scenario`). Do not put setup logic in step files.
+- `typescript-bdd-tests/support/hooks.ts` owns TypeScript fixture setup/teardown
+  (`BeforeAll`, `AfterAll`, `Before`). Do not put setup logic in step files.
 - `src/` is a proper importable package. It must be usable independently of
   behave (i.e., no behave imports inside `src/`).
+- TypeScript step files import directly from `opencode/packages/opencode/src/` via
+  relative paths — no source introspection, no mocks.
 
 ## Documentation strategy
 
 - Feature files **are** the primary documentation. Write them to be read
-  by humans, not just executed by behave.
+  by humans, not just executed by the BDD runner.
 - `README.md` is intentionally thin — entry point only.
 - This file (`AGENTS.md`) is the architectural memory for AI agents.
   Update it when the architecture changes, not when behaviors change.
@@ -64,6 +88,10 @@ src/
 ## Running the suite
 
 ```bash
-hatch run behave                     # all features
-hatch run behave features/<domain>/  # one domain
+# Python BDD tests
+hatch run behave                        # all Python features
+hatch run behave behave-tests/<domain>/ # one domain
+
+# TypeScript BDD tests
+bun x cucumber-js                       # all TypeScript features (from repo root)
 ```

@@ -53,28 +53,6 @@ def _ow_xdg_env() -> dict[str, str]:
     }
 
 
-_BUNDLED_AGENTS_DIR = Path(__file__).parent.parent / "agents"
-
-
-def _ensure_builtin_agents(xdg_env: dict[str, str]) -> None:
-    """Write bundled agent definitions into the ow-scoped opencode config dir.
-
-    Always overwrites so the installed agent definition stays in sync with the
-    current ow version.  Errors are silenced — a missing agent file must not
-    prevent ow from delegating to opencode.
-    """
-    try:
-        agents_dir = Path(xdg_env["XDG_CONFIG_HOME"]) / "opencode" / "agents"
-        agents_dir.mkdir(parents=True, exist_ok=True)
-        for agent_file in _BUNDLED_AGENTS_DIR.glob("*.md"):
-            (agents_dir / agent_file.name).write_text(
-                agent_file.read_text(encoding="utf-8"),
-                encoding="utf-8",
-            )
-    except OSError:
-        pass
-
-
 def _ow_version() -> str:
     try:
         return importlib.metadata.version("ow-agent-orchestration")
@@ -109,7 +87,6 @@ def main() -> None:  # pragma: no cover entry point
     # XDG overrides ensure opencode's storage is scoped to ow's own namespace
     # and does not collide with the user's stock opencode installation.
     xdg = _ow_xdg_env()
-    _ensure_builtin_agents(xdg)
     proc = subprocess.Popen(
         [opencode] + args,
         stdin=sys.stdin,

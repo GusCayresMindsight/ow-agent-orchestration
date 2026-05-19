@@ -1,0 +1,9 @@
+{
+  "default": {
+    "paths": ["typescript-bdd-tests/**/*.feature"],
+    "import": [
+      "typescript-bdd-tests/support/hooks.ts",
+      "typescript-bdd-tests/steps/*.ts"
+    ]
+  }
+}

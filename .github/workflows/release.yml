@@ -31,13 +31,14 @@ jobs:
       - name: Build Python package
         run: uv build
 
-      - name: Run tests
-        run: |
-          uv run --with behave behave
-
-      - name: Install opencode dependencies
-        working-directory: opencode
+      - name: Install dependencies
         run: bun install
+
+      - name: Run TypeScript BDD tests
+        run: bun x cucumber-js
+
+      - name: Run Python BDD tests
+        run: uv run --with behave behave behave-tests/
 
       - name: Build opencode binary (linux-x64)
         working-directory: opencode/packages/opencode
