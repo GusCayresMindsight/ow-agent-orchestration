@@ -1,3 +1,4 @@
+@behave
 Feature: ow entrypoint
   As a developer
   I want to run ow as I would run opencode

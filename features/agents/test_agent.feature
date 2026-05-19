@@ -1,3 +1,4 @@
+@cucumber
 Feature: Built-in Test agent
   As a developer using ow
   I want a "test" primary agent available by default

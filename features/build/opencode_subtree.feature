@@ -1,3 +1,4 @@
+@behave
 Feature: opencode bundled as a git subtree
   As a maintainer of ow
   I want the opencode source to live inside this repository as a git subtree

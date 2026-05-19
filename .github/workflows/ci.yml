@@ -31,4 +31,4 @@ jobs:
         run: bun x cucumber-js
 
       - name: Run Python BDD tests
-        run: uv run --with behave behave features/
+        run: uv run --with behave behave features/ --tags=@behave

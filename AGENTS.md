@@ -11,12 +11,17 @@ It extends opencode with new behaviors. Existing opencode behaviors are
 All Gherkin specs live in a single shared root. Two BDD runners consume them:
 
 ```
-1st class — features/**/*.feature         ← ALL specs (shared); start here always
-2nd class — features/steps/*_steps.py          ← Python wiring; exists to serve features
-            features/cucumber-tests/steps/*.ts ← TypeScript wiring; exists to serve features
+1st class — features/**/*.feature              ← ALL specs (shared); start here always
+2nd class — features/steps/*_steps.py          ← Python wiring; exists to serve @behave features
+            features/cucumber-tests/steps/*.ts ← TypeScript wiring; exists to serve @cucumber features
 3rd class — src/ow_agent_orchestration/        ← Python implementation; exists to serve Python steps
             opencode/packages/opencode/src/    ← TypeScript implementation; exists to serve TS steps
 ```
+
+Each feature file carries a tag that declares which runner executes it:
+- `@behave` — executed by Python behave only
+- `@cucumber` — executed by TypeScript Cucumber-JS only
+- Both tags — executed by both runners
 
 **The golden rule:** no step definition may exist without a feature that
 calls it. No implementation code may exist without a step that calls it.
@@ -32,7 +37,7 @@ ow-agent-orchestration/
 │   ├── environment.py        # behave hooks and shared context (required by behave)
 │   ├── steps/                # Python step definitions (behave requires this name)
 │   │   └── <domain>_steps.py
-│   ├── cucumber-tests/       # TypeScript BDD infrastructure
+│   ├── cucumber-tests/       # TypeScript BDD infrastructure (excluded from behave via tag)
 │   │   ├── package.json
 │   │   ├── tsconfig.json
 │   │   ├── support/
@@ -68,6 +73,9 @@ ow-agent-orchestration/
 - `features/environment.py` owns Python fixture setup/teardown (`before_scenario`,
   `after_scenario`). Do not put setup logic in step files.
 - `features/steps/` is behave's required name — it cannot be changed via configuration.
+- Every feature file must carry `@behave`, `@cucumber`, or both. Behave runs
+  `features/ --tags=@behave`; Cucumber-JS runs with `tags: "@cucumber"` in
+  `cucumber.json`. A feature with both tags is executed by both runners.
 - `features/cucumber-tests/support/hooks.ts` owns TypeScript fixture setup/teardown
   (`BeforeAll`, `AfterAll`, `Before`). Do not put setup logic in step files.
 - `src/` is a proper importable package. It must be usable independently of
@@ -87,9 +95,9 @@ ow-agent-orchestration/
 
 ```bash
 # Python BDD tests
-hatch run behave                          # all features
+hatch run behave                          # all @behave features
 hatch run behave features/<domain>/       # one domain
 
 # TypeScript BDD tests
-bun x cucumber-js                         # all TypeScript features (from repo root)
+bun x cucumber-js                         # all @cucumber features (from repo root)
 ```

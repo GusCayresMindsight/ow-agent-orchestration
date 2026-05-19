@@ -21,4 +21,4 @@ dependencies = [
 ]
 
 [tool.hatch.envs.default.scripts]
-behave = "behave features/ {args}"
+behave = "behave features/ --tags=@behave {args}"

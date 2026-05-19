@@ -1,3 +1,4 @@
+@behave
 Feature: Storage isolation from stock opencode
   As a developer with both ow and a personal opencode installation
   I want ow to store sessions, config, cache, and state in separate directories
