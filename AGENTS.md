@@ -12,7 +12,7 @@ All Gherkin specs live in a single shared root. Two BDD runners consume them:
 
 ```
 1st class — features/**/*.feature         ← ALL specs (shared); start here always
-2nd class — features/behave-tests/*_steps.py   ← Python wiring; exists to serve features
+2nd class — features/steps/*_steps.py          ← Python wiring; exists to serve features
             features/cucumber-tests/steps/*.ts ← TypeScript wiring; exists to serve features
 3rd class — src/ow_agent_orchestration/        ← Python implementation; exists to serve Python steps
             opencode/packages/opencode/src/    ← TypeScript implementation; exists to serve TS steps
@@ -28,10 +28,9 @@ Work always flows top-down: feature → step → implementation.
 ow-agent-orchestration/
 ├── package.json              ← bun workspace root (covers opencode/* + features/cucumber-tests)
 ├── cucumber.json             ← cucumber-js config (run from repo root with: bun x cucumber-js)
-├── behave.ini                ← behave config (sets steps_dir = behave-tests)
 ├── features/                 ← ALL Gherkin feature files (shared spec root)
 │   ├── environment.py        # behave hooks and shared context (required by behave)
-│   ├── behave-tests/         # Python step definitions (steps_dir in behave.ini)
+│   ├── steps/                # Python step definitions (behave requires this name)
 │   │   └── <domain>_steps.py
 │   ├── cucumber-tests/       # TypeScript BDD infrastructure
 │   │   ├── package.json
@@ -68,6 +67,7 @@ ow-agent-orchestration/
   Never one step file per feature file.
 - `features/environment.py` owns Python fixture setup/teardown (`before_scenario`,
   `after_scenario`). Do not put setup logic in step files.
+- `features/steps/` is behave's required name — it cannot be changed via configuration.
 - `features/cucumber-tests/support/hooks.ts` owns TypeScript fixture setup/teardown
   (`BeforeAll`, `AfterAll`, `Before`). Do not put setup logic in step files.
 - `src/` is a proper importable package. It must be usable independently of
