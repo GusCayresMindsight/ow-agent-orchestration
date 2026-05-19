@@ -21,4 +21,4 @@ dependencies = [
 ]
 
 [tool.hatch.envs.default.scripts]
-behave = "behave behave-tests/ {args}"
+behave = "behave --steps-dir behave-tests/steps features/ {args}"

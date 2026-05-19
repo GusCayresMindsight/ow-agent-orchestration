@@ -1,9 +1,9 @@
 {
   "default": {
-    "paths": ["typescript-bdd-tests/**/*.feature"],
+    "paths": ["features/**/*.feature"],
     "import": [
-      "typescript-bdd-tests/support/hooks.ts",
-      "typescript-bdd-tests/steps/*.ts"
+      "cucumber-tests/support/hooks.ts",
+      "cucumber-tests/steps/*.ts"
     ]
   }
 }

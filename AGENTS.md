@@ -8,15 +8,14 @@ It extends opencode with new behaviors. Existing opencode behaviors are
 
 ## Architecture hierarchy (strictly enforced)
 
-Two parallel BDD test roots exist — one Python, one TypeScript:
+All Gherkin specs live in a single shared root. Two BDD runners consume them:
 
 ```
-1st class — behave-tests/**/*.feature          ← Python BDD spec; start here for Python domains
-            typescript-bdd-tests/**/*.feature  ← TypeScript BDD spec; start here for TS domains
-2nd class — behave-tests/steps/*_steps.py      ← Python wiring; exists to serve Python features
-            typescript-bdd-tests/steps/*.ts    ← TypeScript wiring; exists to serve TS features
-3rd class — src/ow_agent_orchestration/        ← Python implementation; exists to serve Python steps
-            opencode/packages/opencode/src/    ← TypeScript implementation; exists to serve TS steps
+1st class — features/**/*.feature         ← ALL specs (shared); start here always
+2nd class — behave-tests/steps/*_steps.py ← Python wiring; exists to serve features
+            cucumber-tests/steps/*.ts     ← TypeScript wiring; exists to serve features
+3rd class — src/ow_agent_orchestration/   ← Python implementation; exists to serve Python steps
+            opencode/packages/opencode/src/ ← TypeScript implementation; exists to serve TS steps
 ```
 
 **The golden rule:** no step definition may exist without a feature that
@@ -27,19 +26,18 @@ Work always flows top-down: feature → step → implementation.
 
 ```
 ow-agent-orchestration/
-├── package.json              ← bun workspace root (covers opencode/* + typescript-bdd-tests)
+├── package.json              ← bun workspace root (covers opencode/* + cucumber-tests)
 ├── cucumber.json             ← cucumber-js config (run from repo root with: bun x cucumber-js)
-├── behave-tests/             ← Python BDD suite
-│   ├── environment.py        # behave hooks and shared context
-│   ├── <domain>/
-│   │   └── <behavior>.feature  # one file per distinct behavior
+├── features/                 ← ALL Gherkin feature files (shared spec root)
+│   ├── environment.py        # behave hooks and shared context (required by behave)
+│   └── <domain>/
+│       └── <behavior>.feature  # one file per distinct behavior
+├── behave-tests/             ← Python BDD infrastructure (steps only)
 │   └── steps/
 │       └── <domain>_steps.py   # step defs grouped by domain, not by class/module
-├── typescript-bdd-tests/     ← TypeScript BDD suite
+├── cucumber-tests/           ← TypeScript BDD infrastructure
 │   ├── package.json
 │   ├── tsconfig.json
-│   ├── <domain>/
-│   │   └── <behavior>.feature
 │   ├── support/
 │   │   └── hooks.ts          # Effect runtime lifecycle (BeforeAll / AfterAll / Before)
 │   └── steps/
@@ -47,7 +45,7 @@ ow-agent-orchestration/
 ├── opencode/                 ← upstream subtree (unchanged except agent additions)
 ├── src/
 │   └── ow_agent_orchestration/
-│       └── <domain>/         # mirrors behave-tests/<domain>/ structure
+│       └── <domain>/         # mirrors features/<domain>/ structure
 └── pyproject.toml
 ```
 
@@ -68,9 +66,9 @@ ow-agent-orchestration/
   read like English.
 - One `<domain>_steps.py` (Python) or `<domain>_steps.ts` (TypeScript) per domain.
   Never one step file per feature file.
-- `behave-tests/environment.py` owns Python fixture setup/teardown (`before_scenario`,
+- `features/environment.py` owns Python fixture setup/teardown (`before_scenario`,
   `after_scenario`). Do not put setup logic in step files.
-- `typescript-bdd-tests/support/hooks.ts` owns TypeScript fixture setup/teardown
+- `cucumber-tests/support/hooks.ts` owns TypeScript fixture setup/teardown
   (`BeforeAll`, `AfterAll`, `Before`). Do not put setup logic in step files.
 - `src/` is a proper importable package. It must be usable independently of
   behave (i.e., no behave imports inside `src/`).
@@ -89,9 +87,9 @@ ow-agent-orchestration/
 
 ```bash
 # Python BDD tests
-hatch run behave                        # all Python features
-hatch run behave behave-tests/<domain>/ # one domain
+hatch run behave                          # all features
+hatch run behave features/<domain>/       # one domain
 
 # TypeScript BDD tests
-bun x cucumber-js                       # all TypeScript features (from repo root)
+bun x cucumber-js                         # all TypeScript features (from repo root)
 ```

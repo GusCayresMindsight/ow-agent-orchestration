@@ -5,6 +5,6 @@
     "opencode/packages/*",
     "opencode/packages/console/*",
     "opencode/packages/sdk/js",
-    "typescript-bdd-tests"
+    "cucumber-tests"
   ]
 }
