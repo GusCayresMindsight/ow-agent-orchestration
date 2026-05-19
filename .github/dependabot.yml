@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Our TypeScript BDD infrastructure — scan all deps in cucumber-tests
+  - package-ecosystem: "npm"
+    directory: "/cucumber-tests"
+    schedule:
+      interval: "weekly"
+
+  # Python dependencies (pyproject.toml)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # When adding a new npm dependency to an opencode package, add an entry here
+  # with an allow list so only our additions are scanned (upstream deps are
+  # fixed via subtree update, not individual Dependabot PRs):
+  #
+  # - package-ecosystem: "npm"
+  #   directory: "/opencode/packages/opencode"   # adjust to the target package
+  #   schedule:
+  #     interval: "weekly"
+  #   allow:
+  #     # ow: added for <reason / feature name>
+  #     - dependency-name: "the-package-name"
